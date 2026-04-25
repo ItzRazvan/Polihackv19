@@ -1,4 +1,4 @@
-# Polihack19 Website - Quick Setup Guide
+# ATMOSENSE Website - Quick Setup Guide
 
 ## ✅ What's Been Completed
 

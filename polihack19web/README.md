@@ -1,4 +1,4 @@
-# Polihack19 Web App
+# ATMOSENSE Web App
 
 Modern B2B SaaS website for selling API access. Built with React, TypeScript, Firebase, and React Router.
 
