@@ -51,6 +51,19 @@ jest.mock('react-native-background-timer', () => ({
   }),
 }));
 
+// Mock GeohashConverter
+jest.mock('../utils/GeohashConverter', () => ({
+  GeohashConverter: {
+    toGeohash: jest.fn((lat: number, lon: number) => {
+      // Simple mock geohash generator for testing
+      return `gh_${lat.toFixed(2)}_${lon.toFixed(2)}`;
+    }),
+    fromGeohash: jest.fn((_hash: string) => {
+      return { latitude: 0, longitude: 0 };
+    }),
+  },
+}));
+
 describe('SensorSDK', () => {
   let sdk: SensorSDK;
 

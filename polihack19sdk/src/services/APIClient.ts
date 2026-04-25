@@ -1,4 +1,4 @@
-import type { BatchData } from '../types';
+import type { BatchData, APIResponse } from '../types';
 
 /**
  * Handles API communication for sending sensor data batches
@@ -22,12 +22,12 @@ export class APIClient {
 
   /**
    * Send a batch of sensor data to the API
-   * Returns true if successful, false otherwise
+   * Returns APIResponse if successful, null otherwise
    */
-  async sendBatch(batchData: BatchData): Promise<boolean> {
+  async sendBatch(batchData: BatchData): Promise<APIResponse | null> {
     if (!this.apiUrl) {
       console.error('[APIClient] API URL not configured');
-      return false;
+      return null;
     }
 
     // If no data in batch, skip sending
@@ -36,7 +36,7 @@ export class APIClient {
       batchData.barometerReadings.length === 0 &&
       batchData.altitudeReadings.length === 0
     ) {
-      return true;
+      return null;
     }
 
     try {
@@ -59,8 +59,11 @@ export class APIClient {
         console.error(
           `[APIClient] API returned status ${response.status}: ${response.statusText}`
         );
-        return false;
+        return null;
       }
+
+      // Parse the JSON response
+      const data = await response.json() as APIResponse;
 
       console.log(
         '[APIClient] Batch sent successfully. Accelerometer readings:',
@@ -71,10 +74,11 @@ export class APIClient {
         batchData.altitudeReadings.length
       );
 
-      return true;
+      return data;
     } catch (error) {
       console.error('[APIClient] Error sending batch:', error);
-      return false;
+      return null;
     }
   }
 }
+

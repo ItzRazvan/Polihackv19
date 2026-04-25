@@ -1,5 +1,7 @@
 import { accelerometer, barometer } from 'react-native-sensors';
 import Geolocation from 'react-native-geolocation-service';
+import { GeohashConverter } from '../utils/GeohashConverter';
+import { StatisticsUtil } from '../utils/StatisticsUtil';
 import type {
   AccelerometerReading,
   BarometerReading,
@@ -7,14 +9,18 @@ import type {
 } from '../types';
 
 /**
- * Collects sensor readings from accelerometer, barometer, and GPS
+ * Collects sensor readings from accelerometer (Z-axis only), barometer, and GPS
  */
 export class DataCollector {
   private accelerometerReadings: AccelerometerReading[] = [];
+  private accelerometerZBuffer: number[] = []; // Buffer for Z-axis raw values to calculate median
   private barometerReadings: BarometerReading[] = [];
   private altitudeReadings: AltitudeReading[] = [];
 
-  private accelerometerFrequency: number = 1; // Hz
+  private latitudeBuffer: number[] = []; // Buffer for latitude values to calculate median
+  private longitudeBuffer: number[] = []; // Buffer for longitude values to calculate median
+  private altitudeBuffer: number[] = []; // Buffer for altitude values
+
   private barometricFrequency: number = 1; // Hz
   private gpsFrequency: number = 1; // Hz
 
@@ -22,16 +28,14 @@ export class DataCollector {
   private barometerSubscription: any = null;
   private gpsWatchId: number | null = null;
 
-  private lastAccelerometerTime: number = 0;
   private lastBarometerTime: number = 0;
   private lastGpsTime: number = 0;
 
   constructor(
-    accelerometerFreq: number = 1,
+    _accelerometerFreq: number = 1,
     barometricFreq: number = 1,
     gpsFreq: number = 1
   ) {
-    this.accelerometerFrequency = accelerometerFreq;
     this.barometricFrequency = barometricFreq;
     this.gpsFrequency = gpsFreq;
   }
@@ -56,12 +60,57 @@ export class DataCollector {
 
   /**
    * Get all buffered readings and clear the buffer
+   * Calculates median for accelerometer Z-axis and GPS coordinates on-device
    */
   getAndClearBuffer(): {
     accelerometerReadings: AccelerometerReading[];
     barometerReadings: BarometerReading[];
     altitudeReadings: AltitudeReading[];
   } {
+    // Calculate median of Z-axis values
+    let zMedian = 0;
+    if (this.accelerometerZBuffer.length > 0) {
+      zMedian = StatisticsUtil.calculateMedian(this.accelerometerZBuffer);
+    }
+
+    // If we have Z-axis data, create a single reading with median
+    if (this.accelerometerZBuffer.length > 0) {
+      this.accelerometerReadings = [
+        {
+          timestamp: Date.now(),
+          z: zMedian,
+        },
+      ];
+    }
+
+    // Calculate median GPS coordinates and convert to geohash
+    if (this.latitudeBuffer.length > 0 && this.longitudeBuffer.length > 0) {
+      const medianLatitude = StatisticsUtil.calculateMedian(
+        this.latitudeBuffer
+      );
+      const medianLongitude = StatisticsUtil.calculateMedian(
+        this.longitudeBuffer
+      );
+      const medianAltitude =
+        this.altitudeBuffer.length > 0
+          ? StatisticsUtil.calculateMedian(this.altitudeBuffer)
+          : 0;
+
+      // Convert median point to geohash for privacy
+      const geohash = GeohashConverter.toGeohash(
+        medianLatitude,
+        medianLongitude
+      );
+
+      this.altitudeReadings = [
+        {
+          timestamp: Date.now(),
+          altitude: medianAltitude,
+          geohash,
+        },
+      ];
+    }
+
     const result = {
       accelerometerReadings: [...this.accelerometerReadings],
       barometerReadings: [...this.barometerReadings],
@@ -71,6 +120,10 @@ export class DataCollector {
     this.accelerometerReadings = [];
     this.barometerReadings = [];
     this.altitudeReadings = [];
+    this.accelerometerZBuffer = [];
+    this.latitudeBuffer = [];
+    this.longitudeBuffer = [];
+    this.altitudeBuffer = [];
 
     return result;
   }
@@ -79,11 +132,10 @@ export class DataCollector {
    * Update sampling frequencies
    */
   updateFrequencies(
-    accelerometerFreq: number,
+    _accelerometerFreq: number,
     barometricFreq: number,
     gpsFreq: number
   ): void {
-    this.accelerometerFrequency = accelerometerFreq;
     this.barometricFrequency = barometricFreq;
     this.gpsFrequency = gpsFreq;
   }
@@ -91,20 +143,9 @@ export class DataCollector {
   private startAccelerometerCollection(): void {
     try {
       this.accelerometerSubscription = accelerometer.subscribe(
-        ({ x, y, z }) => {
-          const now = Date.now();
-          const interval = 1000 / this.accelerometerFrequency;
-
-          // Rate limit based on frequency
-          if (now - this.lastAccelerometerTime >= interval) {
-            this.accelerometerReadings.push({
-              timestamp: now,
-              x,
-              y,
-              z,
-            });
-            this.lastAccelerometerTime = now;
-          }
+        ({ z }) => {
+          // Collect Z-axis values for median calculation
+          this.accelerometerZBuffer.push(z);
         },
         (error) => {
           console.error('[DataCollector] Accelerometer error:', error);
@@ -169,16 +210,13 @@ export class DataCollector {
 
           // Rate limit based on frequency
           if (now - this.lastGpsTime >= interval) {
-            const { latitude, longitude, altitude, accuracy } =
-              position.coords;
+            const { latitude, longitude, altitude } = position.coords;
 
-            this.altitudeReadings.push({
-              timestamp: now,
-              altitude: altitude || 0,
-              latitude,
-              longitude,
-              accuracy: accuracy || 0,
-            });
+            // Buffer raw coordinates for median calculation
+            this.latitudeBuffer.push(latitude);
+            this.longitudeBuffer.push(longitude);
+            this.altitudeBuffer.push(altitude || 0);
+
             this.lastGpsTime = now;
           }
         },
