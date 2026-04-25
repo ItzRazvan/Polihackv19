@@ -11450,18 +11450,18 @@ __metadata:
 
 "react-native-polihack19sdk@file:..::locator=react-native-polihack19sdk-example%40workspace%3Aexample":
   version: 0.1.0
-  resolution: "react-native-polihack19sdk@file:..#..::hash=3ff845&locator=react-native-polihack19sdk-example%40workspace%3Aexample"
+  resolution: "react-native-polihack19sdk@file:..#..::hash=8c4024&locator=react-native-polihack19sdk-example%40workspace%3Aexample"
   dependencies:
     "@react-native-async-storage/async-storage": "npm:>=3.0.2"
     latlon-geohash: "npm:^2.0.0"
     react-native-background-timer: "npm:>=2.4.1"
     react-native-geolocation-service: "npm:>=5.3.1"
     react-native-permissions: "npm:>=5.5.1"
-    react-native-sensors: "npm:>=7.3.6"
+    react-native-sensors: "patch:react-native-sensors@npm%3A7.3.6#~/.yarn/patches/react-native-sensors-npm-7.3.6-ed34263610.patch"
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 10c0/e4061a528b46cbd83b04eca000dcd3d6a161af10881001709949962ab616112e22a00f5312bed1ab713080175bbaea5ca77fd682ffd67d2ee2de6eb6b68728c9
+  checksum: 10c0/3d3bd40f78633127a8942add47373f405b76f2947861e9032c9f77115c4897b43e0e02c84c8b384409e054f9ad18c80396ba665bc2571426cbe12851b11dbbce
   languageName: node
   linkType: hard
 
@@ -11493,7 +11493,7 @@ __metadata:
     react-native-builder-bob: "npm:^0.41.0"
     react-native-geolocation-service: "npm:>=5.3.1"
     react-native-permissions: "npm:>=5.5.1"
-    react-native-sensors: "npm:>=7.3.6"
+    react-native-sensors: "patch:react-native-sensors@npm%3A7.3.6#~/.yarn/patches/react-native-sensors-npm-7.3.6-ed34263610.patch"
     release-it: "npm:^20.0.1"
     turbo: "npm:^2.9.6"
     typescript: "npm:^6.0.3"
@@ -11503,7 +11503,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-native-sensors@npm:>=7.3.6":
+"react-native-sensors@npm:7.3.6":
   version: 7.3.6
   resolution: "react-native-sensors@npm:7.3.6"
   dependencies:
@@ -11512,6 +11512,18 @@ __metadata:
     prop-types: ^15.6.0
     react-native: ">=0.39.0"
   checksum: 10c0/efa08b7f27b97b4d334afba51b564dac9ded6f7b684bb774a17f5c02a8f22cc7b72afa8338cb66fef2bf85f0fd96cfe89cd7d5a1ad280cef9e86f32d3c483b52
+  languageName: node
+  linkType: hard
+
+"react-native-sensors@patch:react-native-sensors@npm%3A7.3.6#~/.yarn/patches/react-native-sensors-npm-7.3.6-ed34263610.patch":
+  version: 7.3.6
+  resolution: "react-native-sensors@patch:react-native-sensors@npm%3A7.3.6#~/.yarn/patches/react-native-sensors-npm-7.3.6-ed34263610.patch::version=7.3.6&hash=fb6c49"
+  dependencies:
+    rxjs: "npm:>= 6"
+  peerDependencies:
+    prop-types: ^15.6.0
+    react-native: ">=0.39.0"
+  checksum: 10c0/2645358f9e37f9c55ca697fab8fa64d123dfa2e3b54aa81c85462b19c4a478c092929080ec09d3e8c538ec165158f1de78c4f34bf7e314f12d32faa76f30fe61
   languageName: node
   linkType: hard
 
