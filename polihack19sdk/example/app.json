@@ -30,7 +30,10 @@
     "extra": {
       "eas": {
         "projectId": "f8ca5c19-0bde-4b22-87f0-be66d8fe7ad5"
-      }
+      },
+      "plugins": [
+      "./with-monorepo-async-storage.js"
+    ]
     }
   }
 }

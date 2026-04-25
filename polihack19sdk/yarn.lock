@@ -3294,6 +3294,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/expo-with-async-storage@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@react-native-async-storage/expo-with-async-storage@npm:1.0.0"
+  peerDependencies:
+    expo: ">=53.0.0"
+  peerDependenciesMeta:
+    expo:
+      optional: true
+  checksum: 10c0/8bce644f11d4c13dfe1303e39c0000431e30c6b5452d88f6f34a4d6f8f3863b23c9dc125c8ab58191e585edcc756be494715f35c00107c30245f4e7c8f063e67
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:0.85.2":
   version: 0.85.2
   resolution: "@react-native/assets-registry@npm:0.85.2"
@@ -11435,6 +11447,7 @@ __metadata:
   resolution: "react-native-polihack19sdk-example@workspace:example"
   dependencies:
     "@expo/metro-runtime": "npm:~55.0.10"
+    "@react-native-async-storage/expo-with-async-storage": "npm:^1.0.0"
     expo: "npm:~55.0.17"
     expo-dev-client: "npm:~55.0.28"
     expo-status-bar: "npm:~55.0.5"
