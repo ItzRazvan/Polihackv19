@@ -82,11 +82,10 @@ export class BackgroundTaskManager {
     }
 
     try {
-      // Get all buffered readings
+      // Get all buffered readings (median already calculated in DataCollector)
       const { accelerometerReadings, barometerReadings, altitudeReadings } =
         this.dataCollector.getAndClearBuffer();
 
-      // Create batch data
       const batchData: BatchData = {
         timestamp: Date.now(),
         accelerometerReadings,
@@ -95,7 +94,15 @@ export class BackgroundTaskManager {
       };
 
       // Send to API
-      await this.apiClient.sendBatch(batchData);
+      const response = await this.apiClient.sendBatch(batchData);
+
+      // Check if API requested an update to the batch interval (e.g. for battery saving)
+      if (response && response.updateInterval) {
+        if (response.updateInterval !== this.batchInterval) {
+          console.log(`[BackgroundTaskManager] Updating batch interval from ${this.batchInterval}ms to ${response.updateInterval}ms based on API response`);
+          this.setBatchInterval(response.updateInterval);
+        }
+      }
     } catch (error) {
       console.error('[BackgroundTaskManager] Error processing batch:', error);
     }
