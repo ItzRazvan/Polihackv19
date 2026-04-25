@@ -20,13 +20,19 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.andrei631.polihack19app"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
       "@react-native-async-storage/expo-with-async-storage"
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "45429827-b063-46eb-bbeb-aaf88085db9f"
+      }
+    }
   }
 }
