@@ -14,11 +14,13 @@ npm install react-native-polihack19sdk
 
 
 ```js
-import { multiply } from 'react-native-polihack19sdk';
+import { SensorSDK } from 'react-native-polihack19sdk';
 
 // ...
 
-const result = multiply(3, 7);
+const sdk = new SensorSDK();
+await sdk.initialize({ apiUrl: 'https://api.example.com/data' });
+await sdk.start();
 ```
 
 
