@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { AppUser } from '../services/authService';
+import logo from '../assets/logo.svg';
 
 interface HomePageProps {
   user: AppUser | null;
@@ -26,9 +27,13 @@ export function HomePage({ user }: HomePageProps) {
         justifyContent: 'space-between',
         alignItems: 'center',
       }}>
-        <h2 style={{ margin: 0, color: '#e2e8f0', fontSize: '1.5rem', fontWeight: '700' }}>
-          Polihack API
-        </h2>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', cursor: 'pointer' }} onClick={() => navigate('/')}>
+          {/* Logo dimensions increased here */}
+          <img src={logo} alt="Atmosense Logo" style={{ height: '64px', width: '64px' }} />
+          <h2 style={{ margin: 0, color: '#e2e8f0', fontSize: '1.5rem', fontWeight: '700' }}>
+            ATMOSENSE
+          </h2>
+        </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <button
             onClick={() => navigate('/map')}
@@ -262,7 +267,7 @@ export function HomePage({ user }: HomePageProps) {
             margin: '0 0 3rem',
             fontWeight: '600',
           }}>
-            Why Choose Polihack API
+            Why Choose ATMOSENSE
           </h2>
 
           <div style={{
@@ -324,7 +329,7 @@ export function HomePage({ user }: HomePageProps) {
           color: '#94a3b8',
           margin: '0 0 2rem',
         }}>
-          Join thousands of developers using Polihack API
+          Join thousands of developers using ATMOSENSE
         </p>
         <button
           onClick={() => navigate('/pricing')}
@@ -355,7 +360,7 @@ export function HomePage({ user }: HomePageProps) {
         color: '#94a3b8',
         fontSize: '0.9rem',
       }}>
-        <p style={{ margin: 0 }}>© 2026 Polihack. All rights reserved.</p>
+        <p style={{ margin: 0 }}>© 2026 ATMOSENSE. All rights reserved.</p>
       </footer>
     </div>
   );

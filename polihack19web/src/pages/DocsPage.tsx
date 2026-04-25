@@ -81,7 +81,7 @@ export function DocsPage() {
             • Webhook documentation<br />
             • Rate limiting and best practices<br />
             <br />
-            Check back soon or contact support@polihack.com for early access.
+            Check back soon or contact support@atmosense.com for early access.
           </p>
         </div>
       </div>

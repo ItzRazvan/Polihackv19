@@ -77,7 +77,7 @@ export function PricingPage({ user, onPlanActivated }: PricingPageProps) {
 
   const handleActionClick = async (plan: typeof SUBSCRIPTION_PLANS[0]) => {
     if (plan.requiresContact) {
-      window.location.href = 'mailto:support@polihack.com?subject=Polihack%20Plan%20Inquiry';
+      window.location.href = 'mailto:support@atmosense.com?subject=ATMOSENSE%20Plan%20Inquiry';
       return;
     }
 

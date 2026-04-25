@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 624 264">
+  <path d="M 312 18 
+           A 114 114 0 0 0 312 246 
+           L 312 212 
+           A 80 80 0 0 1 312 52 
+           Z" 
+        fill="#000000" />
+        
+  <path d="M 312 68 
+           A 64 64 0 0 0 312 196 
+           L 312 162 
+           A 30 30 0 0 1 312 102 
+           Z" 
+        fill="#000000" />
+        
+  <circle cx="312" cy="132" r="10.5" stroke="#000000" stroke-width="9" fill="none" />
+</svg>
