@@ -38,8 +38,7 @@
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "test": "jest",
-    "release": "release-it --only-version",
-    "postinstall": "patch-package"
+    "release": "release-it --only-version"
   },
   "keywords": [
     "react-native",
@@ -60,12 +59,12 @@
     "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {
-    "react-native-sensors": ">=7.3.6",
+    "@react-native-async-storage/async-storage": ">=3.0.2",
+    "latlon-geohash": "^2.0.0",
+    "react-native-background-timer": ">=2.4.1",
     "react-native-geolocation-service": ">=5.3.1",
     "react-native-permissions": ">=5.5.1",
-    "react-native-background-timer": ">=2.4.1",
-    "@react-native-async-storage/async-storage": ">=3.0.2",
-    "latlon-geohash": "^2.0.0"
+    "react-native-sensors": "patch:react-native-sensors@npm%3A7.3.6#~/.yarn/patches/react-native-sensors-npm-7.3.6-ed34263610.patch"
   },
   "devDependencies": {
     "@commitlint/config-conventional": "^20.5.0",
@@ -89,8 +88,7 @@
     "react-native-builder-bob": "^0.41.0",
     "release-it": "^20.0.1",
     "turbo": "^2.9.6",
-    "typescript": "^6.0.3",
-    "patch-package": "^6.4.7"
+    "typescript": "^6.0.3"
   },
   "peerDependencies": {
     "react": "*",
@@ -174,5 +172,8 @@
       "release-it"
     ],
     "version": "0.62.0"
+  },
+  "resolutions": {
+    "react-native-sensors@npm:>=7.3.6": "patch:react-native-sensors@npm%3A7.3.6#~/.yarn/patches/react-native-sensors-npm-7.3.6-ed34263610.patch"
   }
 }
