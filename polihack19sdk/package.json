@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "an sdk for crowdsourced weather prediction",
   "main": "./lib/module/index.js",
+  "source": "./src/index.tsx",
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
     ".": {
