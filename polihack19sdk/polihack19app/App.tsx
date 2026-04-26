@@ -1,25 +1,50 @@
-import { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, Button, ScrollView } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import { Text, View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { SensorSDK, type SensorSDKConfig } from 'react-native-polihack19sdk';
 
+type AppButtonProps = {
+  title: string;
+  onPress: () => void | Promise<void>;
+  disabled?: boolean;
+  variant: 'primary' | 'success' | 'danger' | 'accent';
+};
+
+function AppButton({ title, onPress, disabled = false, variant }: AppButtonProps) {
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={disabled}
+      style={({ pressed }) => [
+        styles.buttonBase,
+        styles[`${variant}Button`],
+        disabled && styles.buttonDisabled,
+        pressed && !disabled && styles.buttonPressed,
+      ]}
+    >
+      <Text style={styles.buttonText}>{title}</Text>
+    </Pressable>
+  );
+}
+
 export default function App() {
+  const sdkRef = useRef(new SensorSDK());
   const [isRunning, setIsRunning] = useState(false);
   const [status, setStatus] = useState('Initializing...');
   const [permissionStatus, setPermissionStatus] = useState('unknown');
-  const [config] = useState<SensorSDKConfig>({
-    apiUrl: 'https://your-api-endpoint.com/sensor-data',
-    accelerometerFrequency: 1,
-    barometricFrequency: 1,
-    gpsFrequency: 1,
-    batchInterval: 30000,
+  const [config, setConfig] = useState<SensorSDKConfig>({
+    apiUrl: 'https://us-central1-polihack19.cloudfunctions.net/sensor_api/api/readings',
+    apiKey: 'pk_live_he7uu4tv0if3noniryk6qmdc245xwpacp',
+    accelerometerFrequency: 500,
+    barometricFrequency: 500,
+    gpsFrequency: 500,
+    batchInterval: 3000,
   });
 
   // Initialize SDK on mount
   useEffect(() => {
     const initializeSDK = async () => {
       try {
-        const sdk = new SensorSDK();
-        await sdk.initialize(config);
+        await sdkRef.current.initialize(config);
         setStatus('SDK initialized. Press Start to begin collection.');
       } catch (error) {
         setStatus(`Initialization error: ${error}`);
@@ -29,12 +54,22 @@ export default function App() {
     initializeSDK();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = sdkRef.current.onConfigChange((updatedConfig) => {
+      setConfig(updatedConfig);
+    });
+
+    return unsubscribe;
+  }, []);
+
+  const updateSDKConfig = (partialConfig: Partial<SensorSDKConfig>) => {
+    sdkRef.current.configure(partialConfig);
+    setConfig((previousConfig) => ({ ...previousConfig, ...partialConfig }));
+  };
+  
   const handleStart = async () => {
     try {
-      const sdk = new SensorSDK();
-      await sdk.initialize(config);
-
-      const success = await sdk.start();
+      const success = await sdkRef.current.start();
       if (success) {
         setIsRunning(true);
         setStatus('Collecting sensor data...');
@@ -48,8 +83,7 @@ export default function App() {
 
   const handleStop = () => {
     try {
-      const sdk = new SensorSDK();
-      sdk.stop();
+      sdkRef.current.stop();
       setIsRunning(false);
       setStatus('SDK stopped');
     } catch (error) {
@@ -59,8 +93,7 @@ export default function App() {
 
   const handleCheckPermission = async () => {
     try {
-      const sdk = new SensorSDK();
-      const permission = await sdk.checkLocationPermission();
+      const permission = await sdkRef.current.checkLocationPermission();
       setPermissionStatus(permission);
     } catch (error) {
       setPermissionStatus(`Error: ${error}`);
@@ -82,26 +115,26 @@ export default function App() {
 
         <View style={styles.buttonContainer}>
           <View style={styles.button}>
-            <Button
+            <AppButton
               title="Check Permission"
               onPress={handleCheckPermission}
-              color="#2196F3"
+              variant="primary"
             />
           </View>
           <View style={styles.button}>
-            <Button
+            <AppButton
               title={isRunning ? 'Running...' : 'Start Collection'}
               onPress={handleStart}
               disabled={isRunning}
-              color="#4CAF50"
+              variant="success"
             />
           </View>
           <View style={styles.button}>
-            <Button
+            <AppButton
               title="Stop Collection"
               onPress={handleStop}
               disabled={!isRunning}
-              color="#f44336"
+              variant="danger"
             />
           </View>
         </View>
@@ -124,7 +157,20 @@ export default function App() {
             Batch Interval: {config.batchInterval}ms
           </Text>
         </View>
-
+        <AppButton
+          title="Force Send Batch"
+          onPress={async () => {
+            try {
+              updateSDKConfig({ batchInterval: 1 });
+              handleStop();
+              await handleStart();
+              setStatus('Batch sent successfully');
+            } catch (error) {
+              setStatus(`Error sending batch: ${error}`);
+            }
+          }}
+          variant="accent"
+        />
         <Text style={styles.infoText}>
           Ensure your device has location permissions enabled. The SDK will
           automatically request location permission when started. API batches
@@ -170,6 +216,37 @@ const styles = StyleSheet.create({
   },
   button: {
     marginVertical: 5,
+  },
+  buttonBase: {
+    borderRadius: 10,
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  primaryButton: {
+    backgroundColor: '#1d4ed8',
+  },
+  successButton: {
+    backgroundColor: '#15803d',
+  },
+  dangerButton: {
+    backgroundColor: '#b91c1c',
+  },
+  accentButton: {
+    backgroundColor: '#0f766e',
+    marginTop: 14,
+  },
+  buttonPressed: {
+    opacity: 0.88,
+  },
+  buttonDisabled: {
+    backgroundColor: '#9ca3af',
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
   },
   configBox: {
     backgroundColor: '#fff',

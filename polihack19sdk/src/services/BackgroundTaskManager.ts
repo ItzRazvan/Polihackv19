@@ -12,6 +12,7 @@ export class BackgroundTaskManager {
   private dataCollector: DataCollector | null = null;
   private apiClient: APIClient | null = null;
   private batchInterval: number = 30000; // 30 seconds default
+  private onBatchIntervalChange?: (interval: number) => void;
 
   /**
    * Initialize the background task manager
@@ -19,11 +20,13 @@ export class BackgroundTaskManager {
   initialize(
     dataCollector: DataCollector,
     apiClient: APIClient,
-    batchInterval: number = 30000
+    batchInterval: number = 30000,
+    onBatchIntervalChange?: (interval: number) => void
   ): void {
     this.dataCollector = dataCollector;
     this.apiClient = apiClient;
     this.batchInterval = batchInterval;
+    this.onBatchIntervalChange = onBatchIntervalChange;
   }
 
   /**
@@ -63,7 +66,12 @@ export class BackgroundTaskManager {
    * Update batch interval (in milliseconds)
    */
   setBatchInterval(interval: number): void {
+    if (interval === this.batchInterval) {
+      return;
+    }
+
     this.batchInterval = interval;
+    this.onBatchIntervalChange?.(interval);
 
     // If task is running, restart with new interval
     if (this.taskId !== null) {

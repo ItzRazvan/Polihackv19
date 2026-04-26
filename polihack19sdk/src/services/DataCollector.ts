@@ -69,6 +69,12 @@ export class DataCollector {
   } {
     // Calculate median of Z-axis values
     let zMedian = 0;
+    let barMedian = 0;
+    if (this.barometerReadings.length > 0) {
+      barMedian = StatisticsUtil.calculateMedian(
+        this.barometerReadings.map((r) => r.pressure)
+      );
+    }
     if (this.accelerometerZBuffer.length > 0) {
       zMedian = StatisticsUtil.calculateMedian(this.accelerometerZBuffer);
     }
@@ -82,6 +88,16 @@ export class DataCollector {
         },
       ];
     }
+    //If we have barometer data, create a single reading with median
+    if (this.barometerReadings.length > 0) {
+      this.barometerReadings = [
+        {
+          timestamp: Date.now(),
+          pressure: barMedian,
+        },
+      ];
+    }
+
 
     // Calculate median GPS coordinates and convert to geohash
     if (this.latitudeBuffer.length > 0 && this.longitudeBuffer.length > 0) {
@@ -211,7 +227,6 @@ export class DataCollector {
           // Rate limit based on frequency
           if (now - this.lastGpsTime >= interval) {
             const { latitude, longitude, altitude } = position.coords;
-
             // Buffer raw coordinates for median calculation
             this.latitudeBuffer.push(latitude);
             this.longitudeBuffer.push(longitude);

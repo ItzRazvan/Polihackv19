@@ -39,6 +39,16 @@ export class APIClient {
       return null;
     }
 
+    // Require a complete batch to preserve backend contract.
+    // GPS can lag at startup, so skip silently until all sensors have data.
+    if (
+      batchData.accelerometerReadings.length === 0 ||
+      batchData.barometerReadings.length === 0 ||
+      batchData.altitudeReadings.length === 0
+    ) {
+      return null;
+    }
+
     try {
       const headers: Record<string, string> = {
         'Content-Type': 'application/json',

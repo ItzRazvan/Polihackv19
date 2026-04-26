@@ -16,6 +16,7 @@ export class SensorSDK {
   private isRunning: boolean = false;
   private isInitialized: boolean = false;
   private isStarting: boolean = false;
+  private configListeners = new Set<(config: SensorSDKConfig) => void>();
   private config: SensorSDKConfig = {
     apiUrl: '',
     accelerometerFrequency: 1,
@@ -45,6 +46,7 @@ export class SensorSDK {
       gpsFrequency: config.gpsFrequency || 1,
       batchInterval: config.batchInterval || 30000,
     };
+    this.notifyConfigListeners();
 
     // Initialize services
     this.dataCollector = new DataCollector(
@@ -62,7 +64,10 @@ export class SensorSDK {
     this.backgroundTaskManager.initialize(
       this.dataCollector,
       this.apiClient,
-      this.config.batchInterval
+      this.config.batchInterval,
+      (interval: number) => {
+        this.applyConfigUpdate({ batchInterval: interval });
+      }
     );
 
     this.isInitialized = true;
@@ -190,8 +195,8 @@ export class SensorSDK {
       const newApiUrl = config.apiUrl || this.config.apiUrl;
       const newApiKey = config.apiKey || this.config.apiKey || '';
       this.apiClient.configure(newApiUrl, newApiKey);
-      if (config.apiUrl) this.config.apiUrl = config.apiUrl;
-      if (config.apiKey) this.config.apiKey = config.apiKey;
+      if (config.apiUrl) this.applyConfigUpdate({ apiUrl: config.apiUrl });
+      if (config.apiKey) this.applyConfigUpdate({ apiKey: config.apiKey });
     }
 
     // Update sampling frequencies if provided
@@ -208,17 +213,21 @@ export class SensorSDK {
       );
 
       if (config.accelerometerFrequency)
-        this.config.accelerometerFrequency = config.accelerometerFrequency;
+        this.applyConfigUpdate({
+          accelerometerFrequency: config.accelerometerFrequency,
+        });
       if (config.barometricFrequency)
-        this.config.barometricFrequency = config.barometricFrequency;
+        this.applyConfigUpdate({
+          barometricFrequency: config.barometricFrequency,
+        });
       if (config.gpsFrequency)
-        this.config.gpsFrequency = config.gpsFrequency;
+        this.applyConfigUpdate({ gpsFrequency: config.gpsFrequency });
     }
 
     // Update batch interval if provided
     if (config.batchInterval && this.backgroundTaskManager) {
       this.backgroundTaskManager.setBatchInterval(config.batchInterval);
-      this.config.batchInterval = config.batchInterval;
+      this.applyConfigUpdate({ batchInterval: config.batchInterval });
     }
 
     console.log('[SensorSDK] Configuration updated');
@@ -246,9 +255,36 @@ export class SensorSDK {
   }
 
   /**
+   * Subscribe to SDK configuration changes.
+   * Returns an unsubscribe function.
+   */
+  onConfigChange(
+    listener: (config: SensorSDKConfig) => void
+  ): () => void {
+    this.configListeners.add(listener);
+    listener(this.getConfig());
+
+    return () => {
+      this.configListeners.delete(listener);
+    };
+  }
+
+  /**
    * Check location permission status without prompting
    */
   async checkLocationPermission(): Promise<PermissionStatus> {
     return await this.permissionsManager.checkLocationPermission();
+  }
+
+  private applyConfigUpdate(configPatch: Partial<SensorSDKConfig>): void {
+    this.config = { ...this.config, ...configPatch };
+    this.notifyConfigListeners();
+  }
+
+  private notifyConfigListeners(): void {
+    const currentConfig = this.getConfig();
+    this.configListeners.forEach((listener) => {
+      listener(currentConfig);
+    });
   }
 }

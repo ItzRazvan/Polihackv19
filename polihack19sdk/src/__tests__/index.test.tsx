@@ -178,7 +178,19 @@ describe('APIClient', () => {
     };
 
     const result = await apiClient.sendBatch(batch);
-    expect(result).toBe(true);
+    expect(result).toBeNull();
+  });
+
+  it('should skip incomplete batch data without throwing', async () => {
+    const batch: BatchData = {
+      timestamp: Date.now(),
+      accelerometerReadings: [{ timestamp: Date.now(), z: 1.23 }],
+      barometerReadings: [{ timestamp: Date.now(), pressure: 1000 }],
+      altitudeReadings: [],
+    };
+
+    const result = await apiClient.sendBatch(batch);
+    expect(result).toBeNull();
   });
 
   it('should reconfigure API settings', () => {
@@ -216,5 +228,14 @@ describe('BackgroundTaskManager', () => {
     expect(() => {
       manager.setBatchInterval(60000);
     }).not.toThrow();
+  });
+
+  it('should notify when batch interval changes', () => {
+    const onBatchIntervalChange = jest.fn();
+    manager.initialize(dataCollector, apiClient, 30000, onBatchIntervalChange);
+
+    manager.setBatchInterval(45000);
+
+    expect(onBatchIntervalChange).toHaveBeenCalledWith(45000);
   });
 });
