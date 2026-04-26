@@ -23,9 +23,8 @@ export function DemoPage() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
-  // ⚠️ Replace this with your actual API URL and Demo API Key
-  const API_URL = 'https://your-api-endpoint.com/sensor_api/api/readings';
-  const API_KEY = 'YOUR_DEMO_API_KEY'; 
+  const API_URL = 'https://us-central1-polihack19.cloudfunctions.net/sensor_api/api/readings';
+  const API_KEY = 'pk_live_he7uu4tv0if3noniryk6qmdc245xwpacp'; 
 
   const fetchData = useCallback(async () => {
     try {
@@ -34,7 +33,7 @@ export function DemoPage() {
       const startTime = now - 60000; 
       
       const response = await fetch(
-        `${API_URL}?aggregation=mean,trend&start_time=${startTime}&end_time=${now}`,
+        `${API_URL}?aggregation=mean,trend`,
         {
           headers: {
             'X-API-Key': API_KEY,

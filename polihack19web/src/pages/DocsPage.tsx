@@ -1,7 +1,13 @@
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 export function DocsPage() {
   const navigate = useNavigate();
+
+  // Trigger the redirect as soon as the component mounts
+  useEffect(() => {
+    window.location.href = 'https://us-central1-polihack19.cloudfunctions.net/sensor_api/docs';
+  }, []);
 
   return (
     <div style={{
@@ -66,7 +72,7 @@ export function DocsPage() {
             color: '#94a3b8',
             margin: '0 0 1.5rem',
           }}>
-            📚 Documentation coming soon!
+            Redirecting to Swagger UI... 🚀
           </p>
           <p style={{
             fontSize: '1rem',
@@ -74,14 +80,13 @@ export function DocsPage() {
             margin: 0,
             lineHeight: '1.6',
           }}>
-            We're building comprehensive API documentation including:<br />
-            • Getting started guide<br />
-            • API reference and endpoints<br />
-            • Code examples (Node.js, Python, JavaScript)<br />
-            • Webhook documentation<br />
-            • Rate limiting and best practices<br />
-            <br />
-            Check back soon or contact support@atmosense.com for early access.
+            If you are not redirected automatically,{' '}
+            <a 
+              href="https://us-central1-polihack19.cloudfunctions.net/sensor_api/docs"
+              style={{ color: '#3b82f6', textDecoration: 'none' }}
+            >
+              click here
+            </a>.
           </p>
         </div>
       </div>
