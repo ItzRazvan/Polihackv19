@@ -249,6 +249,31 @@ export function HomePage({ user }: HomePageProps) {
           >
             View Demo
           </button>
+          
+          <button
+            onClick={() => navigate('/sensor-demo')}
+            style={{
+              padding: '0.75rem 2rem',
+              background: 'transparent',
+              color: '#e2e8f0',
+              border: '1px solid rgba(51, 65, 85, 0.5)',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontSize: '1rem',
+              fontWeight: '600',
+              transition: 'all 0.2s',
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = 'rgba(51, 65, 85, 0.2)';
+              e.currentTarget.style.borderColor = 'rgba(51, 65, 85, 0.8)';
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.borderColor = 'rgba(51, 65, 85, 0.5)';
+            }}
+          >
+            Live Sensors
+          </button>
         </div>
       </div>
 

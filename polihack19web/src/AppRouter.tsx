@@ -9,6 +9,7 @@ import { Dashboard } from './pages/Dashboard';
 import { DocsPage } from './pages/DocsPage';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import './styles.css';
+import { DemoPage } from './pages/DemoPage';
 
 const PENDING_PLAN_STORAGE_KEY = 'pendingSubscriptionPlan';
 
@@ -86,6 +87,7 @@ function AppContent() {
       <Route path="/pricing" element={<PricingPage user={user} onPlanActivated={handlePlanActivated} />} />
       <Route path="/map" element={<MapPage />} />
       <Route path="/docs" element={<DocsPage />} />
+      <Route path="/sensor-demo" element={<DemoPage />} />
 
       {/* Auth routes */}
       <Route
