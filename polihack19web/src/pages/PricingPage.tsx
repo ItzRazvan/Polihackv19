@@ -7,7 +7,7 @@ const SUBSCRIPTION_PLANS = [
   {
     id: 'starter',
     name: 'Trojan Horse Partner',
-    price: '$0',
+    price: '0€',
     period: '/month',
     description: 'Free local dashboard access in exchange for embedding our SDK.',
     features: [
@@ -22,7 +22,7 @@ const SUBSCRIPTION_PLANS = [
   {
     id: 'pro',
     name: 'Regional Fleet SaaS',
-    price: '$199',
+    price: '199€',
     period: '/month',
     description: 'For dispatchers who want alerts without providing data.',
     features: [
@@ -37,11 +37,11 @@ const SUBSCRIPTION_PLANS = [
   {
     id: 'business',
     name: 'Commercial API',
-    price: '$999',
+    price: '999€',
     period: '/month',
     description: 'For regional logistics and drone operators.',
     features: [
-      'Up to 5 Metro Areas',
+      'Access to 1 Country',
       'Sub-5 minute latency',
       '5,000,000 API requests/month',
       'Priority Support',
